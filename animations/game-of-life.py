@@ -253,6 +253,9 @@ def generate_with_game_of_life(
                 else:
                     # Decode single token
                     char = decode_tokens([frame_tokens[idx]])
+                    # Replace newline with space
+                    if char == "\n":
+                        char = " "
                     row_text += char
             lines.append(row_text)
 
@@ -281,6 +284,9 @@ def generate_with_game_of_life(
                 else:
                     # Decode single token
                     char = decode_tokens([frame_tokens[idx]])
+                    # Replace newline with space
+                    if char == "\n":
+                        char = " "
                     row_text += char
             lines.append(row_text)
 
@@ -335,7 +341,7 @@ def main():
     generate_with_game_of_life(
         model,
         initial_tokens,
-        num_iterations=10,
+        num_iterations=100,
         temperature=1.0,
     )
 
