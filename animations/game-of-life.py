@@ -338,6 +338,7 @@ def main():
         initial_tokens,
         num_iterations=100,
         temperature=1.0,
+        confidence_threshold=0.9,
     )
 
 

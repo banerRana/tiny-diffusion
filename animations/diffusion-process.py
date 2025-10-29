@@ -270,7 +270,7 @@ def main():
         num_blocks=10,
         temperature=1.0,
         dataset_tokens=dataset_tokens,
-        confidence_threshold=0.95,
+        confidence_threshold=0.9,
     )
 
 

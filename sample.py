@@ -208,7 +208,7 @@ def main():
 
     method = "confidence"  # or 'topk'
     # method = "topk"
-    confidence_threshold = 0.95  # for confidence method
+    confidence_threshold = 0.9  # for confidence method
     k = 1  # for topk method (default is seq_len // 10)
 
     # Choose generation mode based on context_len
