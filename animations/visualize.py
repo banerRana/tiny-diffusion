@@ -22,9 +22,9 @@ def generate_diffusion_frames(
     model,
     num_blocks=5,
     prompt_len=16,
-    temperature=1.0,
+    temp=0.7,
     confidence_threshold=0.95,
-    top_k=3,
+    top_k=2,
 ):
     """
     Generate samples and capture each denoising step
@@ -33,7 +33,7 @@ def generate_diffusion_frames(
         model: The trained diffusion model
         num_blocks: Number of blocks to generate
         prompt_len: Length of initial prompt
-        temperature: Sampling temperature
+        temp: Sampling temperature
         confidence_threshold: Confidence threshold for decoding
         top_k: Top-k sampling parameter
 
@@ -85,7 +85,7 @@ def generate_diffusion_frames(
         while masked.any():
             # Get predictions and confidences
             logits, _ = model(x)
-            probs = F.softmax(logits / temperature, dim=-1)
+            probs = F.softmax(logits / temp, dim=-1)
             top_k_probs, top_k_indices = torch.topk(probs, k=top_k, dim=-1)
             confidences = top_k_probs.sum(dim=-1)
 
@@ -119,7 +119,7 @@ def generate_diffusion_frames(
     return all_frames
 
 
-def generate_gpt_output(model, max_new_tokens, prompt_len=16):
+def generate_gpt_output(model, max_new_tokens, prompt_len=16, temp=0.7):
     """Generate full GPT output once"""
     device = next(model.parameters()).device
     block_size = gpt.block_size
@@ -132,7 +132,7 @@ def generate_gpt_output(model, max_new_tokens, prompt_len=16):
         cur_context = x[:, -block_size:]
         logits, _ = model(cur_context)
         logits = logits[:, -1, :]
-        probs = F.softmax(logits, dim=-1)
+        probs = F.softmax(logits / temp, dim=-1)
         next_token = torch.multinomial(probs, num_samples=1)
         x = torch.cat((x, next_token), dim=1)
 
@@ -141,7 +141,7 @@ def generate_gpt_output(model, max_new_tokens, prompt_len=16):
 
 def animate_diffusion(diffusion_frames, num_blocks, chars_per_row=64):
     """Create animation for diffusion model only"""
-    fig, ax = plt.subplots(figsize=(12, 8))
+    fig, ax = plt.subplots(figsize=(6, 4))
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
     ax.axis("off")
@@ -195,7 +195,7 @@ def animate_comparison(
     diffusion_frames, gpt_tokens, num_blocks, prompt_len, chars_per_row=64
 ):
     """Create animation comparing diffusion and GPT"""
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 8))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
 
     for ax in [ax1, ax2]:
         ax.set_xlim(0, 1)
@@ -248,7 +248,7 @@ def animate_comparison(
             num_masked = mask.sum().item()
             ax1.set_title(
                 f"Diffusion - Block {block_idx + 1}/{num_blocks} - Remaining: {num_masked} tokens",
-                fontsize=10,
+                fontsize=12,
                 pad=-20,
                 y=0.98,
             )
@@ -270,7 +270,7 @@ def animate_comparison(
 
         ax2.set_title(
             f"GPT - Token {gpt_idx}/{len(gpt_tokens)} (Autoregressive)",
-            fontsize=10,
+            fontsize=12,
             pad=-20,
             y=0.98,
         )
