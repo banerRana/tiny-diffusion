@@ -2,6 +2,8 @@
 
 A character-level language diffusion model for text generation trained on Tiny Shakespeare. It has everything (model architecture, training, and generation) in `diffusion.py` in just 351 lines of code! It is only 10.7 million parameters, so you can also try it out locally!
 
+![Demo](animations/animation.gif)
+
 It also contains a tiny gpt implementation, 'gpt.py', which is very similar to 'diffusion.py'. The model architecture has one line changed (`is_causal=False`), allowing the model to do bidirectional attention instead of causal attention. The `get_batch` and `generate` functions are also modified; the rest of the code (~80%) is exact same.
 
 This is `v2` of this project. It simplified the diffusion code from 955 lines to 351. To view the old version, fetch the `old` branch.
